@@ -366,6 +366,14 @@ private struct EmptyArray: ParsableArguments {
   var verbose = false
 }
 
+private struct EmptyArrayAllRemaining: ParsableArguments {
+  @Option(parsing: .remaining)
+  var array: [String] = []
+
+  @Flag(name: [.short, .long])
+  var verbose = false
+}
+
 extension ErrorMessageTests {
   static let emptyArrayCases: [ErrorCase] = [
     ErrorCase(
@@ -393,6 +401,23 @@ extension ErrorMessageTests {
   @Test(arguments: emptyArrayCases)
   func emptyArray(_ c: ErrorCase) {
     expectErrorMessage(EmptyArray.self, c.arguments, c.expected)
+  }
+
+  func testEmptyArrayOptionAllRemaining() {
+    AssertErrorMessage(
+      EmptyArrayAllRemaining.self, ["--array"],
+      "Missing value for '--array <array>'"
+    )
+
+    AssertErrorMessage(
+      EmptyArrayAllRemaining.self, ["--verbose", "--array"],
+      "Missing value for '--array <array>'"
+    )
+
+    AssertErrorMessage(
+      EmptyArrayAllRemaining.self, ["-v", "--array"],
+      "Missing value for '--array <array>'"
+    )
   }
 }
 

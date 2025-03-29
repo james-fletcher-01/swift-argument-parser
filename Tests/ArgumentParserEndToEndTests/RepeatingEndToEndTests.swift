@@ -132,6 +132,27 @@ extension RepeatingEndToEndTests {
       #expect(baz.names == ["one", "two", "--verbose", "--other", "three"])
     }
   }
+
+  func testParsing_repeatingStringRemaining_9() {
+    AssertParse(Baz.self, ["--verbose", "--names=one"]) { baz in
+      XCTAssertTrue(baz.verbose)
+      XCTAssertEqual(baz.names, ["one"])
+    }
+  }
+
+  func testParsing_repeatingStringRemaining_10() {
+    AssertParse(Baz.self, ["--verbose", "--names=one", "two"]) { baz in
+      XCTAssertTrue(baz.verbose)
+      XCTAssertEqual(baz.names, ["one", "two"])
+    }
+  }
+
+  func testParsing_repeatingStringRemaining_11() {
+    AssertParse(Baz.self, ["--names=one", "--verbose", "two"]) { baz in
+      XCTAssertFalse(baz.verbose)
+      XCTAssertEqual(baz.names, ["one", "--verbose", "two"])
+    }
+  }
 }
 
 // MARK: -
