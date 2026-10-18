@@ -735,35 +735,39 @@ extension SplitArgumentTests {
     #expect(valueB.1 == "bar")
   }
 
-  func testPeekNextElement() throws {
+  @Test func peekNextElement() throws {
     var sut = try SplitArguments(arguments: ["--foo", "bar", "-baz", "qux"])
 
     // To test peekNextElement(after:) we need an index...
-    let (startIndex, _) = try XCTUnwrap(sut.popNext())
+    let optStartIndex = sut.popNext()
+    let (startIndex, _) = try #require(optStartIndex)
 
-    let (indexA, valueA) = try XCTUnwrap(sut.peekNextElement(after: startIndex))
-    XCTAssertEqual(
-      indexA,
-      .argumentIndex(SplitArguments.Index(inputIndex: 1, subIndex: .complete))
+    let (indexA, valueA) = try #require(sut.peekNextElement(after: startIndex))
+    #expect(
+      indexA
+        == .argumentIndex(
+          SplitArguments.Index(inputIndex: 1, subIndex: .complete))
     )
-    XCTAssertEqual(valueA.value.valueString, "bar")
+    #expect(valueA.value.valueString == "bar")
 
-    let (indexB, valueB) = try XCTUnwrap(sut.peekNextElement(after: indexA))
-    XCTAssertEqual(
-      indexB,
-      .argumentIndex(SplitArguments.Index(inputIndex: 2, subIndex: .complete))
+    let (indexB, valueB) = try #require(sut.peekNextElement(after: indexA))
+    #expect(
+      indexB
+        == .argumentIndex(
+          SplitArguments.Index(inputIndex: 2, subIndex: .complete))
     )
-    XCTAssertEqual(valueB.value, .option(.name(.longWithSingleDash("baz"))))
+    #expect(valueB.value == .option(.name(.longWithSingleDash("baz"))))
 
-    let (indexC, valueC) = try XCTUnwrap(sut.peekNextElement(after: indexB))
-    XCTAssertEqual(
-      indexC,
-      .argumentIndex(SplitArguments.Index(inputIndex: 3, subIndex: .complete))
+    let (indexC, valueC) = try #require(sut.peekNextElement(after: indexB))
+    #expect(
+      indexC
+        == .argumentIndex(
+          SplitArguments.Index(inputIndex: 3, subIndex: .complete))
     )
-    XCTAssertEqual(valueC.value.valueString, "qux")
+    #expect(valueC.value.valueString == "qux")
 
     // There are no elements left.
-    XCTAssertNil(sut.peekNextElement(after: indexC))
+    #expect(sut.peekNextElement(after: indexC) == nil)
   }
 }
 

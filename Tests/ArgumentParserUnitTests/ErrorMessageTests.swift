@@ -398,26 +398,29 @@ extension ErrorMessageTests {
       expected: "Missing value for '--array <array>'"),
   ]
 
+  static let emptyArrayCasesAllRemaining: [ErrorCase] = [
+    ErrorCase(
+      id: "--array alone",
+      arguments: ["--array"],
+      expected: "Missing value for '--array <array>'"),
+    ErrorCase(
+      id: "--verbose followed by --array",
+      arguments: ["--verbose", "--array"],
+      expected: "Missing value for '--array <array>'"),
+    ErrorCase(
+      id: "-v followed by --array",
+      arguments: ["-v", "--array"],
+      expected: "Missing value for '--array <array>'"),
+  ]
+
   @Test(arguments: emptyArrayCases)
   func emptyArray(_ c: ErrorCase) {
     expectErrorMessage(EmptyArray.self, c.arguments, c.expected)
   }
 
-  func testEmptyArrayOptionAllRemaining() {
-    AssertErrorMessage(
-      EmptyArrayAllRemaining.self, ["--array"],
-      "Missing value for '--array <array>'"
-    )
-
-    AssertErrorMessage(
-      EmptyArrayAllRemaining.self, ["--verbose", "--array"],
-      "Missing value for '--array <array>'"
-    )
-
-    AssertErrorMessage(
-      EmptyArrayAllRemaining.self, ["-v", "--array"],
-      "Missing value for '--array <array>'"
-    )
+  @Test(arguments: emptyArrayCasesAllRemaining)
+  func emptyArrayAllRemaining(_ c: ErrorCase) {
+    expectErrorMessage(EmptyArrayAllRemaining.self, c.arguments, c.expected)
   }
 }
 
